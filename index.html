@@ -1192,7 +1192,7 @@
       successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
       // Abre o WhatsApp automaticamente
-      if (window.fbq) fbq('track', 'Lead', { content_name: 'whatsapp' });
+      if (window.dispararLeadMonstrinho) window.dispararLeadMonstrinho('whatsapp');
       try {
         var win = window.open(waUrl, '_blank');
         if (!win || win.closed || typeof win.closed === 'undefined') {
@@ -1614,20 +1614,24 @@
 
   <script>
   (function () {
+    var leadJaEnviado = false;
+    function dispararLead(origem) {
+      if (leadJaEnviado) return;
+      leadJaEnviado = true;
+      if (window.fbq) fbq('track', 'Lead', { content_name: origem });
+    }
+    window.dispararLeadMonstrinho = dispararLead;
+
     function ehWhats(el) {
       return el && el.closest(
         'a[href*="wa.me"], a[href*="api.whatsapp.com"], a[href*="whatsapp.com/send"]'
       );
     }
     document.addEventListener('click', function (e) {
-      if (ehWhats(e.target)) {
-        if (window.fbq) fbq('track', 'Lead', { content_name: 'whatsapp' });
-      }
+      if (ehWhats(e.target)) dispararLead('whatsapp');
     }, true);
     document.addEventListener('submit', function (e) {
-      if (e.target.closest('form')) {
-        if (window.fbq) fbq('track', 'Lead', { content_name: 'formulario' });
-      }
+      if (e.target.closest('form')) dispararLead('formulario');
     }, true);
   })();
   </script>
